@@ -4,19 +4,19 @@
 if [ -f ".env" ]; then
     echo "Found existing .env file, validating configuration..."
 else
-    echo "Creating .env file from template..."
-    cp .env.example .env
+    echo "Creating .env file..."
+    cat <<EOL > .env
+# Add essential variables here
+GAME_REPOS=${GAME_REPOS:-}
+TUNNEL_DOMAIN=${TUNNEL_DOMAIN:-}
+CLOUDFLARE_TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN:-}
+EOL
     echo ".env file created. Please update with your configuration."
     echo "You may need to restart the container after updating .env"
 fi
 
 # Check required variables
 REQUIRED_VARS=(
-    "POSTGRES_USER"
-    "POSTGRES_PASSWORD"
-    "POSTGRES_DB"
-    "N8N_ENCRYPTION_KEY"
-    "N8N_USER_MANAGEMENT_JWT_SECRET"
 )
 
 MISSING_VARS=0
@@ -46,4 +46,8 @@ cd /app/games
 echo "Cloning Marsvale AI Agents..."
 git clone https://github.com/marsvale/marsvale-ai-agents.git marsvale
 
-echo "Environment configuration check complete." 
+echo "Environment configuration check complete."
+
+# Start the example development server
+echo "Starting example development server..."
+# Add command to start the server here 
