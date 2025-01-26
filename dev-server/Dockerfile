@@ -1,17 +1,28 @@
-FROM oven/bun:1.0.25-slim
+FROM oven/bun:latest
 
+# Install required packages
 RUN apt-get update && apt-get install -y \
-    curl \
     git \
+    curl \
+    jq \
     python3 \
     python3-pip \
-    jq \
     && rm -rf /var/lib/apt/lists/*
 
+# Install Python packages
+RUN pip3 install pyyaml
+
+# Create app directory
 WORKDIR /app
 
-RUN pip3 install pyyaml
+# Install Hytopia CLI globally
 RUN bun install -g hytopia
+
+# Set up shell
+SHELL ["/bin/bash", "-c"]
+
+# Keep container running
+CMD ["tail", "-f", "/dev/null"]
 
 # Ensure the paths are correct relative to the build context
 COPY cloudflared/config.template.yml /app/cloudflared/

@@ -7,16 +7,28 @@ services:
     build:
       context: ./dev-server
       dockerfile: Dockerfile
-    command: /app/setup-env.sh  # Call setup-env.sh script during container startup
+    command: /app/core/utils/setup-env.sh  # Runs setup and provides shell
+    stdin_open: true  # Keep STDIN open
+    tty: true        # Allocate a pseudo-TTY
     ports:
       - "${HYTOPIA_PORT:-8080}:8080"
     volumes:
       - ./dev-server:/app/core
-      - ${HYTOPIA_EXAMPLES_PATH:-./examples}:/app/games/official-examples
+      - ./examples:/app/games/examples
+      - ./custom-repos:/app/games/custom-repos
+      - ./state:/app/state
+      - ./logs:/app/logs
+      - ./backups:/app/backups
     environment:
       - NODE_ENV=development
       - BUN_ENV=development
-      - TUNNEL_DOMAIN=${TUNNEL_DOMAIN:-}  # Default to empty if not set
+      - ENABLE_OFFICIAL_EXAMPLES=${ENABLE_OFFICIAL_EXAMPLES:-true}
+      - CUSTOM_REPO_1=${CUSTOM_REPO_1:-}
+      - CLOUDFLARE_TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN:-}
+      - TUNNEL_DOMAIN=${TUNNEL_DOMAIN:-}
+      - CUSTOM_DOMAIN=${CUSTOM_DOMAIN:-}
+      - CUSTOM_DOMAIN_DNS_RECORD=${CUSTOM_DOMAIN_DNS_RECORD:-}
+      - HYTOPIA_PORT=${HYTOPIA_PORT:-8080}
     networks:
       - hytopia-net
 
@@ -24,7 +36,7 @@ services:
     image: cloudflare/cloudflared:latest
     command: tunnel --no-autoupdate run
     environment:
-      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN:-}  # Default to empty if not set
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN:-}
     volumes:
       - ./cloudflared:/etc/cloudflared
     networks:
