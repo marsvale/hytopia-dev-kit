@@ -7,28 +7,31 @@ services:
     build:
       context: ./dev-server
       dockerfile: Dockerfile
-    command: /app/core/utils/setup-env.sh  # Runs setup and provides shell
-    stdin_open: true  # Keep STDIN open
-    tty: true        # Allocate a pseudo-TTY
+    command: /app/core/utils/setup-env.sh
+    stdin_open: true
+    tty: true
     ports:
       - "${HYTOPIA_PORT:-8080}:8080"
     volumes:
       - ./dev-server:/app/core
-      - ./examples:/app/games/examples
-      - ./custom-repos:/app/games/custom-repos
+      - ${HYTOPIA_EXAMPLES_PATH:-./examples}:/app/games/examples
+      - ${CUSTOM_GAME_PATH:-./game-repos/custom-game}:/app/games/custom-repos
       - ./state:/app/state
       - ./logs:/app/logs
       - ./backups:/app/backups
     environment:
       - NODE_ENV=development
       - BUN_ENV=development
-      - ENABLE_OFFICIAL_EXAMPLES=${ENABLE_OFFICIAL_EXAMPLES:-true}
-      - CUSTOM_REPO_1=${CUSTOM_REPO_1:-}
-      - CLOUDFLARE_TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN:-}
-      - TUNNEL_DOMAIN=${TUNNEL_DOMAIN:-}
-      - CUSTOM_DOMAIN=${CUSTOM_DOMAIN:-}
-      - CUSTOM_DOMAIN_DNS_RECORD=${CUSTOM_DOMAIN_DNS_RECORD:-}
       - HYTOPIA_PORT=${HYTOPIA_PORT:-8080}
+      - HYTOPIA_EXAMPLES_PATH=${HYTOPIA_EXAMPLES_PATH:-./examples}
+      - CUSTOM_GAME_PATH=${CUSTOM_GAME_PATH:-./game-repos/custom-game}
+      - ENABLE_OFFICIAL_EXAMPLES=${ENABLE_OFFICIAL_EXAMPLES:-true}
+      - ENABLE_CUSTOM_GAME=${ENABLE_CUSTOM_GAME:-true}
+      - EXAMPLES=${EXAMPLES:-}
+      - GAME_REPOS=${GAME_REPOS:-}
+      - CLOUDFLARE_TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN:-}
+      - TUNNEL_ID=${TUNNEL_ID:-}
+      - TUNNEL_DOMAIN=${TUNNEL_DOMAIN:-}
     networks:
       - hytopia-net
 

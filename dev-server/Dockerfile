@@ -12,28 +12,27 @@ RUN apt-get update && apt-get install -y \
 # Install Python packages
 RUN pip3 install pyyaml
 
-# Create app directory
+# Create app directory structure
 WORKDIR /app
+RUN mkdir -p \
+    /app/games/examples \
+    /app/games/custom-repos \
+    /app/state/repos \
+    /app/state/examples \
+    /app/logs \
+    /app/backups/examples
 
 # Install Hytopia CLI globally
 RUN bun install -g hytopia
 
-# Set up shell
+# Copy utility scripts
+COPY utils /app/core/utils/
+RUN chmod +x /app/core/utils/setup-env.sh \
+    /app/core/utils/repo-manager/repo-manager.sh \
+    /app/core/utils/example-manager/example-manager.sh
+
+# Keep container running and provide shell access
 SHELL ["/bin/bash", "-c"]
-
-# Keep container running
 CMD ["tail", "-f", "/dev/null"]
-
-# Ensure the paths are correct relative to the build context
-COPY cloudflared/config.template.yml /app/cloudflared/
-COPY dev-server/utils/generate_config.py /app/utils/
-COPY dev-server/utils/setup-examples.sh /app/utils/
-COPY dev-server/utils/setup-env.sh /app/setup-env.sh
-
-RUN chmod +x /app/utils/setup-examples.sh
-RUN chmod +x /app/setup-env.sh
-
-# Combine CMD and ENTRYPOINT
-ENTRYPOINT ["/bin/sh", "-c", "/app/setup-env.sh && python3 utils/generate_config.py && ./utils/setup-examples.sh && bunx hytopia init && bun --watch index.ts"]
 
 EXPOSE 8080 

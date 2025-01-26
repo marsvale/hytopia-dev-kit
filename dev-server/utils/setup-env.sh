@@ -17,13 +17,29 @@ log() {
 setup_environment() {
     log "Setting up environment..."
     
-    # If .env exists, validate it
-    if [ -f ".env" ]; then
-        log "Found existing .env file, validating configuration..."
-    else
-        log "Creating .env file..."
-        cat <<EOL > .env
+    # Check if .env exists
+    if [ -f "/app/core/.env" ]; then
+        log "Found existing .env file"
+        # Source the environment file
+        set -a
+        source "/app/core/.env"
+        set +a
+        return 0
+    fi
+    
+    # Check if .env.example exists
+    if [ -f "/app/core/.env.example" ]; then
+        log "Found .env.example, creating .env from template..."
+        cp "/app/core/.env.example" "/app/core/.env"
+        log ".env file created from example template"
+        return 0
+    fi
+    
+    # If neither exists, create a new .env with defaults
+    log "Creating new .env file with default configuration..."
+    cat <<EOL > "/app/core/.env"
 # Hytopia Development Kit Configuration
+# Created: $(date +'%Y-%m-%d %H:%M:%S')
 
 # Repository Configuration
 # Add as many CUSTOM_REPO_* entries as needed
@@ -44,8 +60,12 @@ CUSTOM_DOMAIN_DNS_RECORD=${CUSTOM_DOMAIN_DNS_RECORD:-}
 # Development Configuration
 HYTOPIA_PORT=${HYTOPIA_PORT:-8080}
 EOL
-        log ".env file created. Please update with your configuration."
-    fi
+    log "Created new .env file with default configuration"
+    
+    # Source the newly created environment file
+    set -a
+    source "/app/core/.env"
+    set +a
 }
 
 # Initialize directories
