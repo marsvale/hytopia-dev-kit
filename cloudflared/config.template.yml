@@ -1,0 +1,16 @@
+tunnel: ${TUNNEL_ID}
+credentials-file: /etc/cloudflared/credentials.json
+
+ingress:
+  # Examples hub
+  - hostname: "examples.${TUNNEL_DOMAIN}"
+    service: http://hytopia-dev:8080/examples
+  
+  # Dynamic example routes
+${DYNAMIC_EXAMPLES}
+  
+  # Dynamic repository routes
+${DYNAMIC_ROUTES}
+  
+  # Catch-all rule
+  - service: http_status:404 

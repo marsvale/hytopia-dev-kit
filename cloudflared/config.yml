@@ -1,0 +1,20 @@
+tunnel: ${TUNNEL_ID}
+credentials-file: /etc/cloudflared/credentials.json
+
+ingress:
+  # Official examples
+  - hostname: "examples.${TUNNEL_DOMAIN}"
+    service: http://hytopia-dev:8080/examples
+  
+  # Custom game (generic)
+  - hostname: "custom.${TUNNEL_DOMAIN}"
+    service: http://hytopia-dev:8080/custom-game
+  
+  # Individual examples
+  - hostname: "entity-controller.${TUNNEL_DOMAIN}"
+    service: http://hytopia-dev:8080/examples/entity-controller
+  - hostname: "entity-spawn.${TUNNEL_DOMAIN}"
+    service: http://hytopia-dev:8080/examples/entity-spawn
+  
+  # Catch-all rule
+  - service: http_status:404 

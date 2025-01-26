@@ -1,0 +1,32 @@
+# OS files
+**/.DS_Store
+**/Thumbs.db
+
+# Environment and secrets
+.env
+*.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Temporary files
+temp-cole/
+*.log
+*.tmp
+
+# Game repositories
+game-repos/*
+!game-repos/.gitkeep
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Build outputs
+dist/
+build/
