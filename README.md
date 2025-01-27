@@ -17,13 +17,9 @@ A streamlined development environment for Hytopia AI game development, with focu
    cd hytopia-dev-kit
    ```
 
-2. Set up your OpenAI API key:
+2. Prepare the environment configuration:
    ```bash
    cp .env.example .env
-   ```
-   Edit `.env` and add your OpenAI API key:
-   ```env
-   OPENAI_API_KEY=your_key_here
    ```
 
 3. Start the development environment:
@@ -31,7 +27,7 @@ A streamlined development environment for Hytopia AI game development, with focu
    docker-compose up --build
    ```
 
-4. Run any example game (using the AI agents as a complex example):
+4. Run the AI agents example:
    ```bash
    docker exec -it hytopia-dev-kit-hytopia-dev-1 bash
    cd /app/games/examples/ai-agents
