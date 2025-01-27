@@ -78,7 +78,7 @@ process_example() {
         
         # Create/Update example
         mkdir -p "$example_path"
-        if ! bunx hytopia init --template "$example_name" --dir "$example_path"; then
+        if ! bunx hytopia init --template "$example_name"; then
             log "ERROR: Failed to initialize $example_name"
             return 1
         fi

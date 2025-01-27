@@ -1,15 +1,13 @@
 # Hytopia Development Kit
 
-A dynamic Docker-based development environment for Hytopia game development. This toolkit provides an automated setup for both official Hytopia game examples and custom game repositories.
+A streamlined development environment for Hytopia AI game development, with focus on the AI-agents example integration.
 
-## 🎮 Features
+## 🎮 Core Features
 
-- **Dynamic Example Games**: Automatically fetches and sets up the latest official Hytopia game examples
-- **Dynamic Custom Repository Support**: Add any number of your own game repositories via environment variables
-- **Docker-Powered**: Containerized development environment for consistent development experience
-- **Multiplayer Testing**: Built-in support for testing multiplayer functionality
-- **Zero Configuration**: Works out of the box with example games
-- **Flexible Setup**: Works with or without custom repositories
+- **AI Agent Development**: Direct integration with Hytopia's official ai-agents example
+- **Docker-Powered**: Containerized development environment for consistent experience
+- **Zero Configuration**: Works out of the box with the ai-agents example
+- **Hot Reload**: Automatic code reloading for rapid development
 
 ## 🚀 Quick Start
 
@@ -19,77 +17,63 @@ A dynamic Docker-based development environment for Hytopia game development. Thi
    cd hytopia-dev-kit
    ```
 
-2. Create required directories:
-   ```bash
-   mkdir -p examples custom-repos state logs backups cloudflared
-   ```
-
-3. Configure your environment:
+2. Set up your OpenAI API key:
    ```bash
    cp .env.example .env
    ```
-   Edit `.env` to add your custom repositories:
+   Edit `.env` and add your OpenAI API key:
    ```env
-   # Add as many repositories as needed
-   CUSTOM_REPO_1=https://github.com/username/repo1.git
-   CUSTOM_REPO_2=https://github.com/username/repo2.git
-   
-   # Optional: Configure multiplayer testing
-   CLOUDFLARE_TUNNEL_TOKEN=your_token
-   TUNNEL_DOMAIN=your_domain
+   OPENAI_API_KEY=your_key_here
    ```
 
-4. Start the development environment:
+3. Start the development environment:
    ```bash
    docker-compose up --build
    ```
 
-5. Running Games:
-   
-   Open a new terminal and connect to the container:
+4. Run any example game (using the AI agents as a complex example):
    ```bash
    docker exec -it hytopia-dev-kit-hytopia-dev-1 bash
-   ```
-
-   To run an example game:
-   ```bash
-   cd /app/games/examples/<example-name>
+   cd /app/games/examples/ai-agents
    bun --watch index.ts
    ```
+   Simply navigate to the example folder of your choice and start the game server. This approach aligns with Hytopia's conventions, allowing for a straightforward execution of any example game, with the AI agents serving as a detailed reference for integrating the OpenAI API.
 
-   To run a custom repository game:
-   ```bash
-   cd /app/games/custom-repos/<repo-name>
-   bun --watch index.ts
-   ```
+> **Note:** For the AI agents example, ensure you set up your OpenAI API key by copying the `.env.example` file to the `games/hytopia/ai-agents` directory and editing it to include your key:
+> ```bash
+> cp .env.example games/hytopia/ai-agents/.env
+> ```
+> Edit `games/hytopia/ai-agents/.env` and add your OpenAI API key:
+> ```env
+> OPENAI_API_KEY=your_key_here
+> ```
 
-   To run multiple games simultaneously, open additional terminals and repeat the process.
+### Environment Variables required for ai-agents example
 
-## 🔧 Configuration
-
-### Environment Variables
-
-- `CUSTOM_REPO_*`: Add any number of custom repositories (e.g., CUSTOM_REPO_1, CUSTOM_REPO_2, etc.)
-- `ENABLE_OFFICIAL_EXAMPLES`: Set to false to disable official examples (default: true)
-- `HYTOPIA_PORT`: Port for the development server (default: 8080)
-- `CLOUDFLARE_TUNNEL_TOKEN`: (Optional) For multiplayer testing
-- `TUNNEL_DOMAIN`: (Optional) Base domain for multiplayer testing
-- `CUSTOM_DOMAIN`: (Optional) Your own domain for multiplayer testing
-- `CUSTOM_DOMAIN_DNS_RECORD`: (Optional) DNS record for your custom domain
+- `OPENAI_API_KEY`: Your OpenAI API key (required for AI agents)
 
 ### Directory Structure
 
 ```
 hytopia-dev-kit/
-├── examples/           # Official Hytopia examples
-├── custom-repos/       # Your custom game repositories
-├── state/             # State tracking for repos and examples
-├── logs/              # System and operation logs
-├── backups/           # Automatic backups
-├── cloudflared/       # Cloudflare tunnel configuration
+├── examples/           # Official Hytopia examples (including ai-agents)
 ├── dev-server/        # Development server code
 └── .env              # Environment configuration
 ```
+
+## 📝 Development Status
+
+### Current Release (MVP)
+- Basic development environment
+- AI-agents example integration
+- Hot reload development
+- OpenAI API integration
+
+### Roadmap
+1. Enhanced debugging tools
+2. Multi-agent testing support
+3. Custom AI agent templates
+4. Performance monitoring
 
 ## 🎮 Multiplayer Testing
 
@@ -111,22 +95,6 @@ The development kit includes built-in support for multiplayer testing. To use it
    - Via play.hytopia.com: `https://play.hytopia.com?join=your-tunnel-url`
    - Via custom domain: `https://dev.yourdomain.com`
 
-## 📝 Development Log
-
-### Version 0.1.0 (Initial Release)
-- Basic project structure established
-- Docker environment setup
-- Dynamic example game integration
-- Custom repository support
-- Optional multiplayer testing support
-
-### Version 0.2.0 (Current)
-- Dynamic repository management with parallel processing
-- Example management with version tracking and backups
-- Separate environment setup from game server startup
-- Interactive development environment
-- Enhanced logging and health checks
-
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
@@ -139,4 +107,5 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 - [Hytopia Official Documentation](https://docs.hytopia.com)
 - [Docker Documentation](https://docs.docker.com)
-- [Cloudflare Tunnels Documentation](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps) 
+- [Cloudflare Tunnels Documentation](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps)
+- [OpenAI API Documentation](https://platform.openai.com/docs) 
