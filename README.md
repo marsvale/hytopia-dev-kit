@@ -1,6 +1,6 @@
 # Hytopia Development Kit
 
-A streamlined development environment for Hytopia AI game development, with focus on the AI-agents example integration.
+A streamlined development environment for Hytopia AI game development, with focus on simple deployment.
 
 ## 🎮 Core Features
 
