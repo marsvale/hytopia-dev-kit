@@ -9,52 +9,59 @@ A streamlined development environment for Hytopia AI game development, with focu
 - **Zero Configuration**: Works out of the box with the ai-agents example
 - **Hot Reload**: Automatic code reloading for rapid development
 
+## 💻 System Requirements
+
+- **Docker Desktop**: [Install Docker Desktop](https://www.docker.com/products/docker-desktop/)
+  - Windows: Windows 10/11 Pro, Enterprise, or Education (with WSL 2)
+  - Mac: macOS 10.15 or newer
+  - Linux: Ubuntu 20.04 or newer
+- **Git**: [Install Git](https://git-scm.com/downloads)
+- **Terminal**:
+  - Windows: PowerShell, Windows Terminal (recommended), or CMD
+  - Mac/Linux: Terminal
+
 ## 🚀 Quick Start
 
-1. Clone this repository:
+1. Install Docker Desktop and start it
+
+2. Clone this repository:
    ```bash
    git clone https://github.com/yourusername/hytopia-dev-kit.git
    cd hytopia-dev-kit
    ```
 
-2. Prepare the environment configuration:
+3. Prepare the environment configuration:
    ```bash
    cp .env.example .env
    ```
 
-3. Start the development environment:
+4. Start the development environment:
    ```bash
-   docker-compose up --build
+   docker compose up --build
    ```
 
-4. Run the AI agents example:
+5. Run the AI agents example:
    ```bash
+   # Windows PowerShell/CMD:
    docker exec -it hytopia-dev-kit-hytopia-dev-1 bash
+   # Mac/Linux Terminal:
+   docker exec -it hytopia-dev-kit-hytopia-dev-1 bash
+   ```
+   Then inside the container:
+   ```bash
    cd /app/games/examples/ai-agents
    bun --watch index.ts
    ```
-   Simply navigate to the example folder of your choice and start the game server. This approach aligns with Hytopia's conventions, allowing for a straightforward execution of any example game, with the AI agents serving as a detailed reference for integrating the OpenAI API.
-
-> **Note:** For the AI agents example, ensure you set up your OpenAI API key by copying the `.env.example` file to the `games/hytopia/ai-agents` directory and editing it to include your key:
-> ```bash
-> cp .env.example games/hytopia/ai-agents/.env
-> ```
-> Edit `games/hytopia/ai-agents/.env` and add your OpenAI API key:
-> ```env
-> OPENAI_API_KEY=your_key_here
-> ```
-
-### Environment Variables required for ai-agents example
-
-- `OPENAI_API_KEY`: Your OpenAI API key (required for AI agents)
 
 ### Directory Structure
 
 ```
 hytopia-dev-kit/
-├── examples/           # Official Hytopia examples (including ai-agents)
-├── dev-server/        # Development server code
-└── .env              # Environment configuration
+├── .env              # Development kit configuration
+├── dev-server/       # Development server code
+│   └── utils/       # Setup and management scripts
+├── examples/         # Official Hytopia examples
+└── game-repos/      # Your custom game repositories
 ```
 
 ## 📝 Development Status

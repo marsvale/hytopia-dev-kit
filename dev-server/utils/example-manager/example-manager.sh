@@ -34,93 +34,70 @@ backup_example() {
     return 1
 }
 
-# Version check function
-check_example_version() {
-    local example_name="$1"
-    local state_file="$EXAMPLES_STATE_DIR/$example_name.state"
-    local current_version=""
+# Main function to process all examples
+process_all_examples() {
+    local sdk_path="/tmp/hytopia-sdk"
     
-    if [ -f "$state_file" ]; then
-        current_version=$(head -n 1 "$state_file")
-    fi
-    
-    # Get latest version from Hytopia SDK
-    local latest_version=$(curl -s "https://api.github.com/repos/hytopiagg/sdk/contents/examples/$example_name" | jq -r '.sha')
-    
-    if [ "$current_version" != "$latest_version" ]; then
-        echo "$latest_version"
+    # Clone the SDK repository first
+    log "Cloning Hytopia SDK repository..."
+    rm -rf "$sdk_path"
+    if ! git clone --depth 1 https://github.com/hytopiagg/sdk.git "$sdk_path"; then
+        log "ERROR: Failed to clone SDK repository"
         return 1
     fi
     
-    return 0
-}
-
-# Initialize/Update example function
-process_example() {
-    local example_name="$1"
-    local example_path="$EXAMPLES_BASE_DIR/$example_name"
-    local state_file="$EXAMPLES_STATE_DIR/$example_name.state"
-    
-    log "Processing example: $example_name"
-    
-    # Check if update is needed
-    local new_version=""
-    if ! new_version=$(check_example_version "$example_name"); then
-        # Backup existing example if it exists
-        if [ -d "$example_path" ]; then
-            local backup_path=""
-            if ! backup_path=$(backup_example "$example_name"); then
-                log "ERROR: Failed to backup $example_name"
-                return 1
-            fi
-            log "Backed up $example_name to $backup_path"
-        fi
-        
-        # Create/Update example
-        mkdir -p "$example_path"
-        if ! bunx hytopia init --template "$example_name"; then
-            log "ERROR: Failed to initialize $example_name"
-            return 1
-        fi
-        
-        # Update state file
-        echo "$new_version" > "$state_file"
-        date +'%Y-%m-%d %H:%M:%S' >> "$state_file"
-        
-        log "Successfully updated $example_name to version $new_version"
-    else
-        log "$example_name is up to date"
+    # Get list of examples directly from cloned repository
+    if [ ! -d "$sdk_path/examples" ]; then
+        log "ERROR: Examples directory not found in SDK"
+        return 1
     fi
     
-    return 0
-}
-
-# Main function to process all examples
-process_all_examples() {
-    # Get list of examples from Hytopia SDK
-    local examples=$(curl -s https://api.github.com/repos/hytopiagg/sdk/contents/examples | jq -r '.[] | select(.type=="dir") | .name')
-    
+    local examples=$(ls -1 "$sdk_path/examples")
     if [ -z "$examples" ]; then
-        log "ERROR: Failed to fetch example list from Hytopia SDK"
+        log "ERROR: No examples found in SDK"
         return 1
     fi
     
     log "Found examples to process: $examples"
     
-    # Process examples in parallel
-    local pids=()
-    for example in $examples; do
-        process_example "$example" &
-        pids+=($!)
-    done
-    
-    # Wait for all processes to complete
+    # Process examples sequentially
     local failed=0
-    for pid in "${pids[@]}"; do
-        if ! wait "$pid"; then
-            failed=$((failed + 1))
+    for example in $examples; do
+        if [ -d "$sdk_path/examples/$example" ]; then
+            local example_path="$EXAMPLES_BASE_DIR/$example"
+            local state_file="$EXAMPLES_STATE_DIR/$example.state"
+            
+            # Backup existing example if it exists
+            if [ -d "$example_path" ]; then
+                local backup_path=""
+                if ! backup_path=$(backup_example "$example"); then
+                    log "ERROR: Failed to backup $example"
+                    failed=$((failed + 1))
+                    continue
+                fi
+                log "Backed up $example to $backup_path"
+            fi
+            
+            # Copy example files
+            rm -rf "$example_path"
+            mkdir -p "$example_path"
+            if ! cp -R "$sdk_path/examples/$example/." "$example_path/"; then
+                log "ERROR: Failed to copy files for $example"
+                failed=$((failed + 1))
+                continue
+            fi
+            
+            # Update state file with commit SHA
+            local version=$(cd "$sdk_path" && git rev-parse HEAD)
+            echo "$version" > "$state_file"
+            date +'%Y-%m-%d %H:%M:%S' >> "$state_file"
+            
+            log "Successfully updated $example to version $version"
         fi
     done
+    
+    # Keep SDK repository for debugging
+    # rm -rf "$sdk_path"
     
     if [ $failed -gt 0 ]; then
         log "ERROR: $failed example operations failed"

@@ -2,6 +2,11 @@
 
 # Repository Manager for Hytopia Development Kit
 # Handles dynamic repository management, health checks, and updates
+# Expects repositories to be configured in CUSTOM_REPOS as a YAML-style list:
+# CUSTOM_REPOS="
+# - https://github.com/username/repo1.git
+# - https://github.com/username/repo2.git
+# "
 
 set -e
 
@@ -25,18 +30,18 @@ check_repo_health() {
     if [ ! -d "$repo_path/.git" ]; then
         log "ERROR: $repo_name is not a valid git repository"
         return 1
-    }
+    fi
     
     if ! git -C "$repo_path" remote -v > /dev/null; then
         log "ERROR: $repo_name has invalid remote configuration"
         return 1
-    }
+    fi
     
     # Check for Hytopia configuration
     if [ ! -f "$repo_path/hytopia.config.js" ] && [ ! -f "$repo_path/hytopia.config.ts" ]; then
         log "WARNING: $repo_name missing Hytopia configuration"
         return 0  # Non-fatal warning
-    }
+    fi
     
     return 0
 }
@@ -81,21 +86,20 @@ process_repository() {
 
 # Main function to process all repositories
 process_all_repositories() {
-    # Read repository list from environment
-    local repos=()
-    local i=1
+    # Parse repository list from YAML-style list
+    if [ -z "$CUSTOM_REPOS" ]; then
+        log "No custom repositories configured"
+        return 0
+    fi
     
-    while true; do
-        local repo_var="CUSTOM_REPO_$i"
-        local repo_url="${!repo_var}"
-        
-        if [ -z "$repo_url" ]; then
-            break
+    # Convert YAML list to array
+    local repos=()
+    while IFS= read -r line; do
+        # Skip empty lines and non-repo lines
+        if [[ "$line" =~ ^[[:space:]]*-[[:space:]]*(.*) ]]; then
+            repos+=("${BASH_REMATCH[1]}")
         fi
-        
-        repos+=("$repo_url")
-        i=$((i + 1))
-    done
+    done <<< "$CUSTOM_REPOS"
     
     if [ ${#repos[@]} -eq 0 ]; then
         log "No custom repositories configured"

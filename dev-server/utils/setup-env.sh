@@ -18,53 +18,49 @@ setup_environment() {
     log "Setting up environment..."
     
     # Check if .env exists
-    if [ -f "/app/core/.env" ]; then
+    if [ -f "/app/.env" ]; then
         log "Found existing .env file"
         # Source the environment file
         set -a
-        source "/app/core/.env"
+        source "/app/.env"
         set +a
         return 0
     fi
     
-    # Check if .env.example exists
-    if [ -f "/app/core/.env.example" ]; then
-        log "Found .env.example, creating .env from template..."
-        cp "/app/core/.env.example" "/app/core/.env"
-        log ".env file created from example template"
-        return 0
-    fi
-    
-    # If neither exists, create a new .env with defaults
+    # If no .env exists, create a new one with defaults
     log "Creating new .env file with default configuration..."
-    cat <<EOL > "/app/core/.env"
+    cat <<EOL > "/app/.env"
 # Hytopia Development Kit Configuration
 # Created: $(date +'%Y-%m-%d %H:%M:%S')
 
 # Repository Configuration
-# Add as many CUSTOM_REPO_* entries as needed
+# Add your custom repositories below using YAML list format
 # Example:
-# CUSTOM_REPO_1=https://github.com/username/repo1.git
-# CUSTOM_REPO_2=https://github.com/username/repo2.git
-CUSTOM_REPO_1=${CUSTOM_REPO_1:-}
+# CUSTOM_REPOS="
+# - https://github.com/username/repo1.git
+# - https://github.com/username/repo2.git
+# "
+CUSTOM_REPOS=""
 
 # Example Configuration
 ENABLE_OFFICIAL_EXAMPLES=true
 
 # Cloudflare Configuration (Optional)
-CLOUDFLARE_TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN:-}
-TUNNEL_DOMAIN=${TUNNEL_DOMAIN:-}
-CUSTOM_DOMAIN=${CUSTOM_DOMAIN:-}
-CUSTOM_DOMAIN_DNS_RECORD=${CUSTOM_DOMAIN_DNS_RECORD:-}
+CLOUDFLARE_TUNNEL_TOKEN=\${CLOUDFLARE_TUNNEL_TOKEN:-}
+TUNNEL_DOMAIN=\${TUNNEL_DOMAIN:-}
+CUSTOM_DOMAIN=\${CUSTOM_DOMAIN:-}
+CUSTOM_DOMAIN_DNS_RECORD=\${CUSTOM_DOMAIN_DNS_RECORD:-}
 
 # Development Configuration
-HYTOPIA_PORT=${HYTOPIA_PORT:-8080}
+HYTOPIA_PORT=\${HYTOPIA_PORT:-8080}
+NODE_ENV=development
+BUN_ENV=development
 EOL
     log "Created new .env file with default configuration"
     
     # Source the newly created environment file
     set -a
-    source "/app/core/.env"
+    source "/app/.env"
     set +a
 }
 
@@ -101,8 +97,13 @@ run_managers() {
     
     # Run repository manager
     log "Processing custom repositories..."
-    if ! /app/core/utils/repo-manager/repo-manager.sh; then
-        log "WARNING: Some repositories failed to process"
+    # Check if CUSTOM_REPOS has any non-empty entries
+    if [ -z "$CUSTOM_REPOS" ] || ! echo "$CUSTOM_REPOS" | grep -q '^[[:space:]]*-[[:space:]]'; then
+        log "No custom repositories configured. Add repositories to CUSTOM_REPOS in .env file"
+    else
+        if ! /app/core/utils/repo-manager/repo-manager.sh; then
+            log "WARNING: Some repositories failed to process"
+        fi
     fi
 }
 

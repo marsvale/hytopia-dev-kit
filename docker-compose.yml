@@ -13,6 +13,7 @@ services:
     ports:
       - "${HYTOPIA_PORT:-8080}:8080"
     volumes:
+      - ./.env:/app/.env
       - ./dev-server:/app/core
       - ${HYTOPIA_EXAMPLES_PATH:-./examples}:/app/games/examples
       - ${CUSTOM_GAME_PATH:-./game-repos/custom-game}:/app/games/custom-repos
