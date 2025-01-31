@@ -31,3 +31,51 @@ game-repos/*
 dist/
 build/
 fixes
+examples/
+state/
+
+# Python virtual environments
+.venv/
+venv/
+env/
+*.venv
+*.env
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Dependency directories
+node_modules/
+.pnp/
+.pnp.js
+
+# Specific project directories
+examples/
+state/
+
+# IDE-specific files
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# Environment files
+.env
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
