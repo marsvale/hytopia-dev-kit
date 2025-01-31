@@ -11,7 +11,7 @@ services:
     stdin_open: true
     tty: true
     ports:
-      - "${HYTOPIA_PORT:-8080}:8080"
+      - "0.0.0.0:${HYTOPIA_PORT:-8080}:8080"
     volumes:
       - ./.env:/app/.env
       - ./dev-server:/app/core
@@ -34,7 +34,11 @@ services:
       - TUNNEL_ID=${TUNNEL_ID:-}
       - TUNNEL_DOMAIN=${TUNNEL_DOMAIN:-}
     networks:
-      - hytopia-net
+      hytopia-net:
+        aliases:
+          - hytopia-dev
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   cloudflared:
     image: cloudflare/cloudflared:latest

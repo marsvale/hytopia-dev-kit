@@ -30,3 +30,4 @@ game-repos/*
 # Build outputs
 dist/
 build/
+fixes

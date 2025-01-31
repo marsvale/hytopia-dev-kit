@@ -25,6 +25,9 @@ RUN mkdir -p \
 # Install Hytopia CLI globally
 RUN bun install -g hytopia
 
+# Upgrade to latest Bun version
+RUN bun upgrade
+
 # Copy utility scripts
 COPY utils /app/core/utils/
 RUN chmod +x /app/core/utils/setup-env.sh \

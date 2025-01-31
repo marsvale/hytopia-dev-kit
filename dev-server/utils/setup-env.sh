@@ -68,6 +68,26 @@ EOL
 init_directories() {
     log "Initializing directory structure..."
     
+    # Check if fresh install is requested
+    if [ "${FRESH_INSTALL:-false}" = "true" ]; then
+        log "Fresh install requested. Clearing existing directories..."
+        
+        # Clear examples directory
+        rm -rf /app/games/examples/*
+        rm -rf /app/state/examples/*
+        rm -rf /app/backups/examples/*
+        
+        # Clear custom repositories
+        rm -rf /app/games/custom-repos/*
+        rm -rf /app/state/repos/*
+        
+        # Clear logs and state
+        rm -rf /app/logs/*
+        rm -rf /app/state/*
+        
+        log "Directories cleared for fresh install"
+    fi
+    
     mkdir -p \
         /app/games/examples \
         /app/games/custom-repos \

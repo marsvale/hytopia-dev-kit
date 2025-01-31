@@ -111,4 +111,52 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - [Hytopia Official Documentation](https://docs.hytopia.com)
 - [Docker Documentation](https://docs.docker.com)
 - [Cloudflare Tunnels Documentation](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps)
-- [OpenAI API Documentation](https://platform.openai.com/docs) 
+- [OpenAI API Documentation](https://platform.openai.com/docs)
+
+## 🛠 Advanced Configuration
+
+### Fresh Install Mode
+The development kit supports a `FRESH_INSTALL` mode that completely resets the development environment:
+
+- Set `FRESH_INSTALL=true` in your `.env` file
+- Clears all existing:
+  - Examples
+  - Custom repositories
+  - Logs
+  - State tracking files
+- Recreates a pristine development environment
+- Useful for completely resetting your development setup
+
+Example `.env` configuration:
+```env
+FRESH_INSTALL=true
+```
+
+### AI Agents Example Initialization
+The development kit automatically:
+- Generates a `.env` file for the AI agents example
+- Provides a placeholder OpenAI API key
+- Configures default settings for AI agent development
+
+Placeholder `.env` contents:
+```env
+OPENAI_API_KEY=sk-your_openai_api_key_here
+OPENAI_MODEL=gpt-3.5-turbo
+DEBUG=true
+```
+
+**Note:** Replace `sk-your_openai_api_key_here` with your actual OpenAI API key before running the example.
+
+### Automatic Example Management
+- Examples are automatically:
+  - Cloned from the Hytopia SDK
+  - Initialized with `bunx hytopia init`
+  - Backed up before updates
+  - Kept in sync with the latest SDK version
+
+## 🔄 Update and Sync Workflow
+1. Restart the container to get the latest examples
+2. Examples are automatically:
+   - Backed up
+   - Updated from SDK
+   - Initialized with Hytopia CLI 

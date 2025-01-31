@@ -87,6 +87,32 @@ process_all_examples() {
                 continue
             fi
             
+            # Initialize Hytopia project for the example
+            cd "$example_path"
+            if ! bunx hytopia init; then
+                log "ERROR: Failed to initialize Hytopia project for $example"
+                failed=$((failed + 1))
+                continue
+            fi
+            
+            # Special handling for ai-agents example to create .env
+            if [ "$example" = "ai-agents" ]; then
+                log "Creating .env for AI agents example"
+                cat > .env << EOL
+# AI Agents Example Configuration
+
+# OpenAI API Configuration
+# Get your API key from https://platform.openai.com/api-keys
+OPENAI_API_KEY=sk-your_openai_api_key_here
+
+# Optional: Model configuration
+OPENAI_MODEL=gpt-3.5-turbo
+
+# Logging and debugging
+DEBUG=true
+EOL
+            fi
+            
             # Update state file with commit SHA
             local version=$(cd "$sdk_path" && git rev-parse HEAD)
             echo "$version" > "$state_file"
